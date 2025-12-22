@@ -43,6 +43,9 @@
     application.register("gift-box", GiftBoxController)
 
         // Calendar download (ICS)
+    const EVENT_TITLE = "Mujo Date Night";
+    const START_LOCAL = "2026-01-08T17:30:00"; // Local time (Atlanta)
+    const DURATION_MIN = 150; // 2.5 hours
     function buildICS(){
       // Treat START_LOCAL as America/New_York (Atlanta)
       const start = new Date(START_LOCAL);
@@ -98,14 +101,6 @@
       e.preventDefault();
       downloadICS();
     });
-
-    // Maps + site buttons
-    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAPS_QUERY)}`;
-    const maps = document.getElementById('openMaps');
-    maps.href = mapsUrl;
-
-    const site = document.getElementById('openSite');
-    site.href = MUJO_WEBSITE;
 
   </script>
  
@@ -353,8 +348,8 @@
 
               <div class="ctaRow" aria-label="Actions">
                 <a class="btn primary" id="addCal" href="#">Add to calendar</a>
-                <a class="btn" id="openMaps" href="#" target="_blank" rel="noopener">Open in Maps</a>
-                <a class="btn" id="openSite" href="#" target="_blank" rel="noopener">Restaurant site</a>
+                <a class="btn" id="openMaps" href="https://www.google.com/maps/place/Muj%C5%8D/@33.7861247,-84.4114398,95m/data=!3m2!1e3!5s0x88f504ec139a8dfd:0xb22d49a3ac12d5e6!4m6!3m5!1s0x88f505a30869bf21:0xd2194ed6fa05c45a!8m2!3d33.7861591!4d-84.4114224!16s%2Fg%2F11nnm2cm_7?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">Open in Maps</a>
+                <a class="btn" id="openSite" href="https://www.mujoatl.com/" target="_blank" rel="noopener">Restaurant site</a>
               </div>
 
               <p class="footerNote">
