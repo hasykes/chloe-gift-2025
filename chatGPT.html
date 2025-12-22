@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎁 Date Night</title>
+  <meta name="description" content="A little surprise for you." />
+
+  <style>
+    :root{
+      --bg1:#0b0f14;
+      --bg2:#121a24;
+      --card:#0f1722cc;
+      --border:#2a3a4f;
+      --text:#e7eef8;
+      --muted:#a8b6c8;
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --shadow: 0 24px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 15%, rgba(167,139,250,.22), transparent 55%),
+        radial-gradient(1000px 600px at 80% 20%, rgba(125,211,252,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height: 100%;
+      display:grid;
+      place-items:center;
+      padding: 28px 16px;
+    }
+
+    .frame{
+      width: min(880px, 100%);
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(10,14,20,.55);
+      backdrop-filter: blur(14px);
+      border-radius: calc(var(--radius) + 10px);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .dots{ display:flex; gap:8px; }
+    .dot{ width:10px; height:10px; border-radius:999px; background: rgba(255,255,255,.18); }
+
+    .brand{
+      font-size: 14px;
+      letter-spacing:.18em;
+      text-transform: uppercase;
+      color: rgba(231,238,248,.7);
+    }
+
+    .content{
+      padding: 22px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 820px){
+      .content{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(15,23,34,.62), rgba(15,23,34,.38));
+      padding: 18px;
+    }
+
+    .hint{
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .title{
+      font-size: clamp(26px, 3vw, 34px);
+      line-height: 1.1;
+      margin: 10px 0 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle{
+      color: rgba(231,238,248,.82);
+      margin: 0 0 16px;
+      font-size: 15px;
+    }
+
+    .ctaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn.primary{
+      border-color: rgba(125,211,252,.45);
+      background: linear-gradient(90deg, rgba(125,211,252,.22), rgba(167,139,250,.16));
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .tag{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      font-size: 13px;
+      color: rgba(231,238,248,.86);
+    }
+
+    /* Gift animation */
+    .stage{
+      display:grid;
+      place-items:center;
+      min-height: 340px;
+      position: relative;
+    }
+
+    .gift{
+      width: 180px;
+      height: 180px;
+      position: relative;
+      transform: translateZ(0);
+      cursor: pointer;
+      user-select:none;
+      outline:none;
+    }
+
+    .gift:focus-visible{ box-shadow: 0 0 0 4px rgba(125,211,252,.35); border-radius: 26px; }
+
+    .box{
+      position:absolute;
+      inset: 44px 0 0 0;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .ribbonV{
+      position:absolute;
+      left: 50%;
+      top: 44px;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 136px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(125,211,252,.78), rgba(167,139,250,.72));
+      filter: drop-shadow(0 10px 16px rgba(0,0,0,.25));
+    }
+
+    .ribbonH{
+      position:absolute;
+      left: 12px;
+      right: 12px;
+      top: 110px;
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(125,211,252,.72), rgba(167,139,250,.66));
+      filter: drop-shadow(0 10px 16px rgba(0,0,0,.25));
+    }
+
+    .lid{
+      position:absolute;
+      inset: 0 0 114px 0;
+      height: 72px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.16);
+      transform-origin: 40% 100%;
+      transition: transform .55s cubic-bezier(.2,.9,.15,1), translate .55s cubic-bezier(.2,.9,.15,1);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .bow{
+      position:absolute;
+      left: 50%;
+      top: 12px;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 44px;
+      filter: drop-shadow(0 10px 16px rgba(0,0,0,.25));
+      transition: transform .55s cubic-bezier(.2,.9,.15,1);
+    }
+
+    .bow:before,
+    .bow:after{
+      content:"";
+      position:absolute;
+      width: 44px;
+      height: 34px;
+      top: 6px;
+      border-radius: 16px 16px 16px 6px;
+      background: linear-gradient(90deg, rgba(125,211,252,.75), rgba(167,139,250,.70));
+      border: 1px solid rgba(255,255,255,.16);
+    }
+    .bow:before{ left: 0; transform: rotate(-10deg); }
+    .bow:after{ right: 0; transform: scaleX(-1) rotate(-10deg); }
+
+    .bow i{
+      position:absolute;
+      left: 50%;
+      top: 16px;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .tap{
+      margin-top: 14px;
+      font-size: 13px;
+      color: rgba(231,238,248,.75);
+      text-align:center;
+    }
+
+    .gift:hover .lid{ translate: 0 -2px; }
+
+    .open .lid{ transform: rotate(-22deg) translate(-14px, -18px); }
+    .open .bow{ transform: translateX(-50%) rotate(-18deg) translate(-8px,-10px); }
+
+    .reveal{
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .open + .tap + .reveal,
+    .open ~ .reveal{ opacity: 1; transform: translateY(0); }
+
+    /* Confetti */
+    .confetti{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+
+    .confetti span{
+      position:absolute;
+      top: -12px;
+      width: 10px;
+      height: 18px;
+      border-radius: 4px;
+      opacity: .95;
+      transform: translate3d(0,0,0) rotate(0deg);
+      animation: fall var(--dur) linear forwards;
+    }
+
+    @keyframes fall{
+      to{
+        transform: translate3d(var(--dx), 520px, 0) rotate(var(--rot));
+        opacity: 1;
+      }
+    }
+
+    .divider{ height:1px; background: rgba(255,255,255,.08); margin: 14px 0; }
+
+    .details{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .row{
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+
+    .k{ color: rgba(231,238,248,.72); font-size: 13px; }
+    .v{ font-weight: 650; }
+
+    .footerNote{
+      color: rgba(231,238,248,.65);
+      font-size: 12px;
+      margin-top: 10px;
+      line-height: 1.45;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .lid, .bow, .reveal, .btn{ transition:none !important; }
+      .confetti span{ animation:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="frame" role="application" aria-label="Gift invite">
+      <div class="topbar">
+        <div class="dots" aria-hidden="true">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+        <div class="brand">a tiny surprise</div>
+        <div style="width:42px"></div>
+      </div>
+
+      <div class="content">
+        <div class="panel">
+          <div class="hint">Tap the gift to open it.</div>
+          <div class="title">Date Night 🍣</div>
+          <p class="subtitle">A reservation is waiting for you.</p>
+
+          <div class="stage">
+            <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+            <div class="gift" id="gift" tabindex="0" role="button" aria-label="Open gift">
+              <div class="lid"></div>
+              <div class="bow"><i></i></div>
+              <div class="box"></div>
+              <div class="ribbonV"></div>
+              <div class="ribbonH"></div>
+            </div>
+
+            <div class="tap" id="tapText">(click / tap / press Enter)</div>
+
+            <div class="reveal" id="reveal">
+              <div class="pill">
+                <span class="tag">Mujo · Atlanta</span>
+                <span class="tag">Thursday, Jan 8</span>
+                <span class="tag">5:30 PM</span>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="details" aria-label="Reservation details">
+                <div class="row"><div class="k">Where</div><div class="v">Mujo</div></div>
+                <div class="row"><div class="k">When</div><div class="v">Thu, Jan 8 · 5:30 PM</div></div>
+                <div class="row"><div class="k">Dress</div><div class="v">Whatever makes you feel amazing</div></div>
+                <div class="row"><div class="k">Host</div><div class="v">Hayden</div></div>
+              </div>
+
+              <div class="ctaRow" aria-label="Actions">
+                <a class="btn primary" id="addCal" href="#">Add to calendar</a>
+                <a class="btn" id="openMaps" href="#" target="_blank" rel="noopener">Open in Maps</a>
+                <a class="btn" id="openSite" href="#" target="_blank" rel="noopener">Restaurant site</a>
+              </div>
+
+              <p class="footerNote">
+                This page is the invitation. The real gift is that I get to take you out.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="hint">The plan</div>
+          <div class="title" style="margin-top:8px;">Omakase at Mujo</div>
+          <p class="subtitle" style="margin-bottom:0;">
+            We’re doing a special dinner together — no rush, no chores, just you + me.
+          </p>
+
+          <div class="divider"></div>
+
+          <div class="details">
+            <div class="row"><div class="k">Reservation</div><div class="v">5:30 PM</div></div>
+            <div class="row"><div class="k">Day</div><div class="v">Thursday, January 8</div></div>
+            <div class="row"><div class="k">City</div><div class="v">Atlanta</div></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="hint">Optional note</div>
+          <p class="subtitle">If you want, add a short personal message below in the HTML where it says <b>Optional message</b>.</p>
+
+          <div style="border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); border-radius: 16px; padding: 14px;">
+            <div style="color:rgba(231,238,248,.8); font-weight:650;">Optional message</div>
+            <div style="color:rgba(231,238,248,.72); margin-top:8px; line-height:1.5;">
+              I love doing life with you. Let’s make a night of it. ❤️
+            </div>
+          </div>
+
+          <p class="footerNote">Tip: keep the URL short for a cleaner QR code (e.g., a custom domain or a short link).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Customize these ======
+    const EVENT_TITLE = "Mujo Date Night";
+    const START_LOCAL = "2026-01-08T17:30:00"; // Local time (Atlanta)
+    const DURATION_MIN = 150; // 2.5 hours
+
+    // You can set these if you want the buttons to work immediately
+    const MUJO_WEBSITE = "https://www.mujoatl.com/";
+    const MAPS_QUERY = "Mujo Atlanta";
+
+    // ============================
+
+    const gift = document.getElementById('gift');
+    const confetti = document.getElementById('confetti');
+    const reveal = document.getElementById('reveal');
+
+    // Confetti generator (no libraries)
+    function popConfetti(){
+      confetti.innerHTML = "";
+      const pieces = 90;
+      for(let i=0;i<pieces;i++){
+        const s = document.createElement('span');
+        // random pastel-ish via hsl
+        const h = Math.floor(Math.random()*360);
+        const l = 70 + Math.floor(Math.random()*10);
+        const a = 0.9;
+        s.style.background = `hsla(${h}, 90%, ${l}%, ${a})`;
+        s.style.left = Math.random()*100 + "%";
+        s.style.setProperty('--dx', (Math.random()*240 - 120) + 'px');
+        s.style.setProperty('--rot', (Math.random()*720 - 360) + 'deg');
+        s.style.setProperty('--dur', (900 + Math.random()*900) + 'ms');
+        s.style.width = (6 + Math.random()*10) + 'px';
+        s.style.height = (10 + Math.random()*14) + 'px';
+        s.style.opacity = (0.7 + Math.random()*0.3);
+        confetti.appendChild(s);
+      }
+      // cleanup
+      setTimeout(()=>{ confetti.innerHTML = ""; }, 2200);
+    }
+
+    function openGift(){
+      if(gift.classList.contains('open')) return;
+      gift.classList.add('open');
+      popConfetti();
+      // focus the first action for keyboard users
+      setTimeout(()=> document.getElementById('addCal')?.focus(), 650);
+    }
+
+    gift.addEventListener('click', openGift);
+    gift.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openGift();
+      }
+    });
+
+    // Calendar download (ICS)
+    function buildICS(){
+      // Treat START_LOCAL as America/New_York (Atlanta)
+      const start = new Date(START_LOCAL);
+      const end = new Date(start.getTime() + DURATION_MIN*60*1000);
+
+      function pad(n){ return String(n).padStart(2,'0'); }
+      // Format as local time, floating (works well for most calendar apps)
+      function fmt(d){
+        return d.getFullYear()
+          + pad(d.getMonth()+1)
+          + pad(d.getDate())
+          + 'T'
+          + pad(d.getHours())
+          + pad(d.getMinutes())
+          + '00';
+      }
+
+      const uid = `mujo-${Math.random().toString(36).slice(2)}@gift`;
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Gift Invite//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${fmt(new Date())}`,
+        `DTSTART:${fmt(start)}`,
+        `DTEND:${fmt(end)}`,
+        `SUMMARY:${EVENT_TITLE}`,
+        `LOCATION:Mujo, Atlanta, GA`,
+        'DESCRIPTION:Surprise dinner reservation at Mujo. 🎁',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ];
+      return lines.join('\r\n');
+    }
+
+    function downloadICS(){
+      const ics = buildICS();
+      const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mujo-date-night.ics';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('addCal').addEventListener('click', (e)=>{
+      e.preventDefault();
+      downloadICS();
+    });
+
+    // Maps + site buttons
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAPS_QUERY)}`;
+    const maps = document.getElementById('openMaps');
+    maps.href = mapsUrl;
+
+    const site = document.getElementById('openSite');
+    site.href = MUJO_WEBSITE;
+  </script>
+</body>
+</html>

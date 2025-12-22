@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A Gift for Chloe Montana</title>
+
+  <script type="module">
+    import { Application, Controller } from "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm";
+    import confetti from "https://cdn.skypack.dev/canvas-confetti";
+
+    const application = Application.start()
+
+    class GiftBoxController extends Controller {
+      static targets = ["emoji", "claimBtn", "message"];
+
+      claim() {
+        // Remove the joggle animation to stop continuous rotating.
+        this.emojiTarget.classList.remove("joggle");
+
+        // Force a reflow/repaint to reset the state before applying transform transition
+        void this.emojiTarget.offsetWidth;
+
+        // Add the class that triggers the smooth transition
+        this.emojiTarget.classList.add("gift-box__emoji--claimed");
+
+        this.claimBtnTarget.hidden = true;
+
+        setTimeout(() => {
+          this.messageTarget.classList.remove("gift-box__message--hidden");
+          this.emojiTarget.hidden = true;
+
+          confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.25 },
+          });
+        }, 500);
+      }
+    }
+
+    application.register("gift-box", GiftBoxController)
+
+        // Calendar download (ICS)
+    function buildICS(){
+      // Treat START_LOCAL as America/New_York (Atlanta)
+      const start = new Date(START_LOCAL);
+      const end = new Date(start.getTime() + DURATION_MIN*60*1000);
+
+      function pad(n){ return String(n).padStart(2,'0'); }
+      // Format as local time, floating (works well for most calendar apps)
+      function fmt(d){
+        return d.getFullYear()
+          + pad(d.getMonth()+1)
+          + pad(d.getDate())
+          + 'T'
+          + pad(d.getHours())
+          + pad(d.getMinutes())
+          + '00';
+      }
+
+      const uid = `mujo-${Math.random().toString(36).slice(2)}@gift`;
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Gift Invite//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${fmt(new Date())}`,
+        `DTSTART:${fmt(start)}`,
+        `DTEND:${fmt(end)}`,
+        `SUMMARY:${EVENT_TITLE}`,
+        `LOCATION:Mujo, Atlanta, GA`,
+        'DESCRIPTION:Surprise dinner reservation at Mujo. 🎁',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ];
+      return lines.join('\r\n');
+    }
+
+    function downloadICS(){
+      const ics = buildICS();
+      const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mujo-date-night.ics';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('addCal').addEventListener('click', (e)=>{
+      e.preventDefault();
+      downloadICS();
+    });
+
+    // Maps + site buttons
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAPS_QUERY)}`;
+    const maps = document.getElementById('openMaps');
+    maps.href = mapsUrl;
+
+    const site = document.getElementById('openSite');
+    site.href = MUJO_WEBSITE;
+
+  </script>
+ 
+  <style>
+    body { font-family: "Lucida Grande"; }
+    .text-center { text-align: center; }
+    .joggle { animation: joggle 4.5s ease-in-out infinite; }
+
+    .container {
+      width: min(1000px, 100%);
+      margin: 0 auto;
+    }
+
+    button{ background: none; border: none; padding: 0; cursor: pointer; }
+
+    .gift-box { margin-top: 2em; }
+    .gift-box__emoji {
+      font-size: clamp(8rem, 30vmin, 18rem);
+      line-height: 1;
+      display: inline-block;
+    }
+    .gift-box__btn { font-size: 2em; }
+    .gift-box__emoji--claimed {
+      transition: transform 500ms ease;
+      transform: scale(1.5) rotate(12deg);
+    }
+
+    .gift-box__message {
+      margin-top: 2.5em;
+      font-size: 2em;
+      transition: all 500ms ease;
+      display: none;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .gift-box__message--hidden {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    .gift-box__message:not(.gift-box__message--hidden){
+      display: block;
+    }
+
+    @keyframes joggle {
+      0%, 33%, 100% { transform: rotate(0deg); }
+      3.33% { transform: rotate(-10deg); }
+      6.67% { transform: rotate(12deg); }
+      10% { transform: rotate(-10deg); }
+      13.33% { transform: rotate(9deg); }
+      16.67% { transform: rotate(0deg); }
+    }
+
+     :root{
+      --bg1:#0b0f14;
+      --bg2:#121a24;
+      --card:#0f1722cc;
+      --border:#2a3a4f;
+      --text:#e7eef8;
+      --muted:#a8b6c8;
+      --accent:#7dd3fc;
+      --accent2:#a78bfa;
+      --shadow: 0 24px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 15%, rgba(167,139,250,.22), transparent 55%),
+        radial-gradient(1000px 600px at 80% 20%, rgba(125,211,252,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    .page{
+      height: 100dvh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0 16px;
+    }
+
+    .wrap{
+      min-height: 100%;
+      display:grid;
+      place-items:center;
+      padding: 28px 16px;
+    }
+
+
+    .dots{ display:flex; gap:8px; }
+    .dot{ width:10px; height:10px; border-radius:999px; background: rgba(255,255,255,.18); }
+
+    .brand{
+      font-size: 14px;
+      letter-spacing:.18em;
+      text-transform: uppercase;
+      color: rgba(231,238,248,.7);
+    }
+
+    .content{
+      padding: 22px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 820px){
+      .content{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(15,23,34,.62), rgba(15,23,34,.38));
+      padding: 18px;
+      max-height: calc(100dvh - 48px);
+      overflow: hidden;
+    }
+
+    .photo img{
+      width: 100%;
+      height: auto;
+      max-height: min(32vh, 400px);
+      object-fit: cover;
+    }
+
+
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn.primary{
+      border-color: rgba(125,211,252,.45);
+      background: linear-gradient(90deg, rgba(125,211,252,.22), rgba(167,139,250,.16));
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .tag{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      font-size: 18px;
+      color: rgba(231,238,248,.86);
+    }
+
+    h1{
+      padding: 8px 10px;
+      font-size: 32px;
+      color: rgba(231,238,248,.86);
+      font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+      font-weight: 600;
+      letter-spacing: .02em;
+      margin:0;
+    }
+
+    .divider{ height:1px; background: rgba(255,255,255,.08); margin: 14px 0; }
+
+    .details{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .row{
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+
+    .k{ color: rgba(231,238,248,.72); font-size: 13px; }
+    .v{ font-weight: 650; }
+
+    .footerNote{
+      color: rgba(231,238,248,.65);
+      font-size: 12px;
+      margin-top: 10px;
+      line-height: 1.45;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .lid, .bow, .reveal, .btn{ transition:none !important; }
+      .confetti span{ animation:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="container text-center">
+      <div class="gift-box" data-controller="gift-box">
+        <button class="gift-box__btn" data-action="gift-box#claim" data-gift-box-target="claimBtn">
+          <div class="gift-box__emoji joggle" data-gift-box-target="emoji">🎁</div>
+          
+        </button>
+
+        <div class="gift-box__message gift-box__message--hidden" data-gift-box-target="message">
+            <div class="wrap">
+    <div class="frame" role="application" aria-label="Gift invite">
+
+
+     
+        <div class="panel">
+            <div class="reveal" id="reveal">
+              <h1>Dinner for 2</h1>
+              <div class="pill">
+                <span class="tag">Mujo · Atlanta</span>
+                <span class="tag">Thursday, Jan 8</span>
+                <span class="tag">5:30 PM</span>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="photo" aria-label="photo">
+                <img src="https://images.squarespace-cdn.com/content/v1/61d7610c217e3c072ec0c94e/2aa3b64b-b594-4a0b-880e-24c3ef8a92bf/mujo_03_chef-hand_lrg_01.jpg" alt="Mujo restaurant interior" style="width:100%; border-radius: 12px;">
+              </div>
+
+              <div class="ctaRow" aria-label="Actions">
+                <a class="btn primary" id="addCal" href="#">Add to calendar</a>
+                <a class="btn" id="openMaps" href="#" target="_blank" rel="noopener">Open in Maps</a>
+                <a class="btn" id="openSite" href="#" target="_blank" rel="noopener">Restaurant site</a>
+              </div>
+
+              <p class="footerNote">
+                Babysitting Services will be provided by NiNi Esquire (in training).
+              </p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
