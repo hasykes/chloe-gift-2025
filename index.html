@@ -43,7 +43,7 @@
     application.register("gift-box", GiftBoxController)
 
         // Calendar download (ICS)
-    const EVENT_TITLE = "Mujo Date Night";
+    const EVENT_TITLE = "Sushi for 2";
     const START_LOCAL = "2026-01-08T17:30:00"; // Local time (Atlanta)
     const DURATION_MIN = 150; // 2.5 hours
     function buildICS(){
@@ -260,6 +260,8 @@
       gap:10px;
       flex-wrap:wrap;
       margin-top: 14px;
+      align-items: center;
+  
     }
     .tag{
       padding: 8px 10px;
@@ -268,6 +270,7 @@
       background: rgba(255,255,255,.04);
       font-size: 18px;
       color: rgba(231,238,248,.86);
+      flex-grow:1;
     }
 
     h1{
