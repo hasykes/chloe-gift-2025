@@ -105,18 +105,22 @@
     // Play pop sound and audio of Lucia
     const button = document.getElementById('claimBtn')
     let unlocked = false;
-    const audio = new Audio('./sounds/pop.mp3');
-    audio.preload = 'auto';
+    const popAudio = new Audio('./sounds/pop.mp3');
+    const luiAudio = new Audio('./sounds/Lucia 3 - Merry Christmas Mommy 2025.m4a');
+    popAudio.preload = 'auto';
+    luiAudio.preload = 'auto';
+    popAudio.volume = 0.75;
+    luiAudio.volume = 1;
 
     async function unlockAudio() {
       if (unlocked) return;
       try {
         // play a silent-ish blip to unlock
-        audio.muted = true;
-        await audio.play();
-        audio.pause();
-        audio.currentTime = 0;
-        audio.muted = false;
+        popAudio.muted = true;
+        await popAudio.play();
+        popAudio.pause();
+        popAudio.currentTime = 0;
+        popAudio.muted = false;
         unlocked = true;
       } catch (e) {
         console.warn('Unlock failed:', e);
@@ -130,9 +134,12 @@
 
     // later, on any user action:
     async function playSound() {
-      audio.currentTime = 0;
-      await audio.play();
-      console.log('played');
+      popAudio.currentTime = 0;
+      luiAudio.currentTime = 0;
+      await popAudio.play();
+      console.log('pop');
+      await luiAudio.play();
+      console.log('lui');
     }
   </script>
  
@@ -357,7 +364,7 @@
       <div class="gift-box" data-controller="gift-box">
         <button class="gift-box__btn" data-action="gift-box#claim" data-gift-box-target="claimBtn" id="claimBtn">
           <div class="gift-box__emoji joggle" data-gift-box-target="emoji">🎁</div>
-          
+           <h4 class="joggle tag"><em>Turn up your volume!</em></h4>
         </button>
 
         <div class="gift-box__message gift-box__message--hidden" data-gift-box-target="message">
