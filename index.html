@@ -102,6 +102,38 @@
       downloadICS();
     });
 
+    // Play pop sound and audio of Lucia
+    const button = document.getElementById('claimBtn')
+    let unlocked = false;
+    const audio = new Audio('./sounds/pop.mp3');
+    audio.preload = 'auto';
+
+    async function unlockAudio() {
+      if (unlocked) return;
+      try {
+        // play a silent-ish blip to unlock
+        audio.muted = true;
+        await audio.play();
+        audio.pause();
+        audio.currentTime = 0;
+        audio.muted = false;
+        unlocked = true;
+      } catch (e) {
+        console.warn('Unlock failed:', e);
+      }
+    }
+
+    button.addEventListener('click', async () => {
+      await unlockAudio();
+      await playSound();
+    }, { once: true, passive: true });
+
+    // later, on any user action:
+    async function playSound() {
+      audio.currentTime = 0;
+      await audio.play();
+      console.log('played');
+    }
   </script>
  
   <style>
@@ -323,7 +355,7 @@
   <div class="page">
     <div class="container text-center">
       <div class="gift-box" data-controller="gift-box">
-        <button class="gift-box__btn" data-action="gift-box#claim" data-gift-box-target="claimBtn">
+        <button class="gift-box__btn" data-action="gift-box#claim" data-gift-box-target="claimBtn" id="claimBtn">
           <div class="gift-box__emoji joggle" data-gift-box-target="emoji">🎁</div>
           
         </button>
@@ -336,7 +368,7 @@
      
         <div class="panel">
             <div class="reveal" id="reveal">
-              <h1>Dinner for 2</h1>
+              <h1>Omakase for Two</h1>
               <div class="pill">
                 <span class="tag">Mujo · Atlanta</span>
                 <span class="tag">Thursday, Jan 8</span>
